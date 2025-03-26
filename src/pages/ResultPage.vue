@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<h2>Сохраненные данные</h2>
+
 		<pre>{{ formData }}</pre>
 		<router-link to="/">Назад</router-link>
 	</div>

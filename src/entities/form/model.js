@@ -2,19 +2,19 @@ import { defineStore } from 'pinia';
 
 export const useFormStore = defineStore('form', {
 	state: () => ({
-		city: null,
-		workshop: null,
-		employee: null,
-		team: null,
-		shift: null
+		forms: [] // массив для хранения объектов формы
 	}),
 	actions: {
 		setFormData(data) {
-			this.city = data.city;
-			this.workshop = data.workshop;
-			this.employee = data.employee;
-			this.team = data.team;
-			this.shift = data.shift;
+			this.forms.push({ ...data }); // добавляет новый объект формы в массив
+		},
+		removeForm(index) {
+			this.forms.splice(index, 1); // удаляет форму по индексу
+		},
+		updateForm(index, data) {
+			if (this.forms[index]) {
+				this.forms[index] = { ...data }; // обновляет форму по индексу
+			}
 		}
 	}
 });
