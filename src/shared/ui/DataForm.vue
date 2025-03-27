@@ -126,14 +126,35 @@ export default {
 		const selectedShift = ref(null);
 
 
+		// const filteredWorkshops = computed(() => {
+		// 	if (!selectedCity.value) return workshops.value; // Если город не выбран, показываем все цехи
+		// 	return workshops.value.filter(w => w.cityId === selectedCity.value);
+		// });
+
 		const filteredWorkshops = computed(() => {
 			if (!selectedCity.value) return workshops.value; // Если город не выбран, показываем все цехи
-			return workshops.value.filter(w => w.cityId === selectedCity.value);
+			return dictionaryStore.getWorkshopsByCityId(selectedCity.value);
 		});
 
 		const filteredEmployees = computed(() => {
-			if (!selectedWorkshop.value) return employees.value; // Если цех не выбран, показываем всех сотрудников
-			return employees.value.filter(e => e.workshopId === selectedWorkshop.value);
+			// Если ни город, ни цех не выбраны, показываем всех сотрудников
+			if (!selectedCity.value && !selectedWorkshop.value) {
+				return employees.value;
+			}
+
+			// Если выбран только город, фильтруем сотрудников по цехам, которые принадлежат этому городу
+			if (selectedCity.value && !selectedWorkshop.value) {
+				const cityWorkshopIds = dictionaryStore.getWorkshopsByCityId(selectedCity.value).map(w => w.id);
+				return employees.value.filter(e => cityWorkshopIds.includes(e.workshopId));
+			}
+
+			// Если выбран цех, фильтруем сотрудников по этому цеху
+			if (selectedWorkshop.value) {
+				return dictionaryStore.getEmployeesByWorkshopId(selectedWorkshop.value);
+			}
+
+			// По умолчанию возвращаем пустой массив
+			return [];
 		});
 
 		const clearSelect = () => {
