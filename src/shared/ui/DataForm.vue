@@ -143,58 +143,76 @@ export default {
 			</select>
 
 			<button class="btn btn-success" type="submit">Сохранить</button>
-			<button type="button" class="btn btn-success" @click="clearSelect"><i class="bi bi-x-circle"></i></button>
+			<button type="button" class="btn btn-secondary" @click="clearSelect"><i class="bi bi-x-circle"></i></button>
 		</div>
 	</form>
+
 </template>
 
 <script>
 import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useFormStore } from '@/entities/form/model';
+import { useDictionaryStore } from '@/entities/dictionary/model';
+
+
+
 
 export default {
+
 	setup() {
 		const router = useRouter();
 		const formStore = useFormStore();
 
-		const cities = ref([
-			{ id: 1, name: 'Москва' },
-			{ id: 2, name: 'СПб' },
-			{ id: 3, name: 'РНД' }
-		]);
 
-		const workshops = ref([
-			{ id: 1, cityId: 1, name: 'Цех 1' },
-			{ id: 2, cityId: 2, name: 'Цех 2' },
-			{ id: 3, cityId: 3, name: 'Цех 3' }
-		]);
 
-		const employees = ref([
-			{ id: 1, workshopId: 1, name: 'Иван' },
-			{ id: 2, workshopId: 2, name: 'Петр' },
-			{ id: 3, workshopId: 3, name: 'Анатолий' },
-			{ id: 4, workshopId: 3, name: 'Николай' },
+		const dictionaryStore = useDictionaryStore();
 
-		]);
+		const cities = computed(() => dictionaryStore.getCities);
+		const workshops = computed(() => dictionaryStore.getWorkshops);
+		const employees = computed(() => dictionaryStore.getEmployees);
+		const teams = computed(() => dictionaryStore.getTeams);
+		const shifts = computed(() => dictionaryStore.getShifts);
 
-		const teams = ref([
-			{ id: 1, name: 'Бригада 1' },
-			{ id: 2, name: 'Бригада 2' },
-			{ id: 3, name: 'Бригада 3' }
-		]);
 
-		const shifts = ref([
-			{ id: 1, name: 'Первая смена' },
-			{ id: 2, name: 'Вторая смена' },
-			{ id: 3, name: 'Третья смена' }
-		]);
+		// const cities = ref([
+		// 	{ id: 1, name: 'Москва' },
+		// 	{ id: 2, name: 'СПб' },
+		// 	{ id: 3, name: 'РНД' }
+		// ]);
+
+		// const workshops = ref([
+		// 	{ id: 1, cityId: 1, name: 'Цех 1' },
+		// 	{ id: 2, cityId: 2, name: 'Цех 2' },
+		// 	{ id: 3, cityId: 3, name: 'Цех 3' }
+		// ]);
+
+		// const employees = ref([
+		// 	{ id: 1, workshopId: 1, name: 'Иван' },
+		// 	{ id: 2, workshopId: 2, name: 'Петр' },
+		// 	{ id: 3, workshopId: 3, name: 'Анатолий' },
+		// 	{ id: 4, workshopId: 3, name: 'Николай' },
+
+		// ]);
+
+		// const teams = ref([
+		// 	{ id: 1, name: 'Бригада 1' },
+		// 	{ id: 2, name: 'Бригада 2' },
+		// 	{ id: 3, name: 'Бригада 3' }
+		// ]);
+
+		// const shifts = ref([
+		// 	{ id: 1, name: 'Первая смена' },
+		// 	{ id: 2, name: 'Вторая смена' },
+		// 	{ id: 3, name: 'Третья смена' }
+		// ]);
 
 		const selectedCity = ref(null);
 		const selectedWorkshop = ref(null);
 		const selectedEmployee = ref(null);
 		const selectedTeam = ref(null);
 		const selectedShift = ref(null);
+
 
 		const filteredWorkshops = computed(() => {
 			if (!selectedCity.value) return workshops.value; // Если город не выбран, показываем все цехи
@@ -238,7 +256,20 @@ export default {
 			}
 		});
 
+
+
+		const getNameById = (id, list) => {
+			const item = list.find(i => i.id === id);
+			return item ? item.name : 'Неизвестно';
+		};
+
+
 		const handleSubmit = () => {
+			if (!selectedCity.value || !selectedWorkshop.value || !selectedEmployee.value || !selectedTeam.value || !selectedShift.value) {
+				alert("Заполните все нужные поля")
+				return
+			}
+
 			formStore.setFormData({
 				city: selectedCity.value,
 				workshop: selectedWorkshop.value,
@@ -261,7 +292,8 @@ export default {
 			selectedTeam,
 			selectedShift,
 			handleSubmit,
-			clearSelect
+			clearSelect,
+
 		};
 	}
 };

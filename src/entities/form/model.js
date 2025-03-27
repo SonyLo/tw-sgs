@@ -18,3 +18,23 @@ export const useFormStore = defineStore('form', {
 		}
 	}
 });
+
+
+// import { defineStore } from 'pinia';
+
+// export const useFormStore = defineStore('form', {
+// 	state: () => ({
+// 		formData: {
+// 			city: '',
+// 			workshop: '',
+// 			employee: '',
+// 			brigade: '',
+// 			shift: '',
+// 		},
+// 	}),
+// 	actions: {
+// 		setFormData(data) {
+// 			this.formData = data;
+// 		},
+// 	},
+// });
