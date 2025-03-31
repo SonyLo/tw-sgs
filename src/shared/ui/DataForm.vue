@@ -1,49 +1,3 @@
-<!-- <template>
-	<form @submit.prevent="handleSubmit">
-		<div class="input-group mb-3 mt-2">
-			<select class="form-select" v-model="selectedCity">
-				<option :value="null">Все города</option>
-				<option v-for="city in cities" :key="city.id" :value="city.id">
-					{{ city.name }}
-				</option>
-			</select>
-
-			<select class="form-select" v-model="selectedWorkshop">
-				<option :value="null">Все цехи</option>
-				<option v-for="workshop in filteredWorkshops" :key="workshop.id" :value="workshop.id">
-					{{ workshop.name }}
-				</option>
-			</select>
-
-			<select class="form-select" v-model="selectedEmployee">
-				<option :value="null">Все сотрудники</option>
-				<option v-for="employee in filteredEmployees" :key="employee.id" :value="employee.id">
-					{{ employee.name }}
-				</option>
-			</select>
-
-			<select class="form-select" v-model="selectedTeam">
-				<option :value="null">Выберите бригаду</option>
-				<option v-for="team in teams" :key="team.id" :value="team.id">
-					{{ team.name }}
-				</option>
-			</select>
-
-			<select class="form-select" v-model="selectedShift">
-				<option :value="null">Выберите смену</option>
-				<option v-for="shift in shifts" :key="shift.id" :value="shift.id">
-					{{ shift.name }}
-				</option>
-			</select>
-
-			<button class="btn btn-success" type="submit">Сохранить</button>
-			<button type="button" class="btn btn-secondary" @click="clearSelect"><i class="bi bi-x-circle"></i></button>
-		</div>
-	</form>
-
-</template> -->
-
-
 <template>
 	<form @submit.prevent="handleSubmit">
 		<div class="d-flex flex-wrap gap-2 w-100 mt-2">
@@ -125,11 +79,6 @@ export default {
 		const selectedTeam = ref(null);
 		const selectedShift = ref(null);
 
-
-		// const filteredWorkshops = computed(() => {
-		// 	if (!selectedCity.value) return workshops.value; // Если город не выбран, показываем все цехи
-		// 	return workshops.value.filter(w => w.cityId === selectedCity.value);
-		// });
 
 		const filteredWorkshops = computed(() => {
 			if (!selectedCity.value) return workshops.value; // Если город не выбран, показываем все цехи
