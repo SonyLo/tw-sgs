@@ -1,33 +1,13 @@
 import { defineStore } from 'pinia';
+import { dictionaryApi } from './api/dictionaryApi';
 
 export const useDictionaryStore = defineStore('dictionary', {
 	state: () => ({
-		cities: [
-			{ id: 1, name: 'Москва' },
-			{ id: 2, name: 'СПб' },
-			{ id: 3, name: 'РНД' }
-		],
-		workshops: [
-			{ id: 1, cityId: 1, name: 'Цех 1' },
-			{ id: 2, cityId: 2, name: 'Цех 2' },
-			{ id: 3, cityId: 3, name: 'Цех 3' }
-		],
-		employees: [
-			{ id: 1, workshopId: 1, name: 'Иван' },
-			{ id: 2, workshopId: 2, name: 'Петр' },
-			{ id: 3, workshopId: 3, name: 'Анатолий' },
-			{ id: 4, workshopId: 3, name: 'Николай' }
-		],
-		teams: [
-			{ id: 1, name: 'Бригада 1' },
-			{ id: 2, name: 'Бригада 2' },
-			{ id: 3, name: 'Бригада 3' }
-		],
-		shifts: [
-			{ id: 1, name: 'Первая смена' },
-			{ id: 2, name: 'Вторая смена' },
-			{ id: 3, name: 'Третья смена' }
-		]
+		cities: [],
+		workshops: [],
+		employees: [],
+		teams: [],
+		shifts: []
 	}),
 	getters: {
 		getCityById: (state) => (id) => state.cities.find(city => city.id === id)?.name || 'Не найдено',
@@ -43,18 +23,20 @@ export const useDictionaryStore = defineStore('dictionary', {
 		getEmployees: (state) => state.employees,
 		getTeams: (state) => state.teams,
 		getShifts: (state) => state.shifts
-
 	},
 	actions: {
 		async fetchDictionaries() {
-			// Заглушка, заменишь на API-запрос при наличии бэка
-			const response = await fetch('/api/dictionaries');
-			const data = await response.json();
-			this.cities = data.cities;
-			this.workshops = data.workshops;
-			this.employees = data.employees;
-			this.teams = data.teams;
-			this.shifts = data.shifts;
+			try {
+				const data = await dictionaryApi.getAllDictionaries();
+				this.cities = data.cities;
+				this.workshops = data.workshops;
+				this.employees = data.employees;
+				this.teams = data.teams;
+				this.shifts = data.shifts;
+			} catch (error) {
+				console.error('Error fetching dictionaries:', error);
+				// Здесь можно добавить обработку ошибок, например, показ уведомления пользователю
+			}
 		}
 	}
 });
