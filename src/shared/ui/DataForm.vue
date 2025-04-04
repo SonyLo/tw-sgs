@@ -1,6 +1,14 @@
 <template>
 	<form @submit.prevent="handleSubmit">
-		<div class="d-flex flex-wrap gap-2 w-100 mt-2">
+		<div v-if="isLoading" class="text-center mt-3">
+			<div class="spinner-border text-primary" role="status">
+				<span class="visually-hidden">Загрузка...</span>
+			</div>
+		</div>
+		<div v-else-if="error" class="alert alert-danger mt-3" role="alert">
+			{{ error }}
+		</div>
+		<div v-else class="d-flex flex-wrap gap-2 w-100 mt-2">
 			<select class="form-select w-100 w-md-auto" v-model="selectedCity">
 				<option :value="null">Все города</option>
 				<option v-for="city in cities" :key="city.id" :value="city.id">
@@ -49,7 +57,7 @@
 
 
 <script>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useFormStore } from '@/entities/form/model';
 import { useDictionaryStore } from '@/entities/dictionary/model';
@@ -62,10 +70,24 @@ export default {
 	setup() {
 		const router = useRouter();
 		const formStore = useFormStore();
-
-
-
 		const dictionaryStore = useDictionaryStore();
+
+		const isLoading = ref(false);
+		const error = ref(null);
+
+		// Инициализация данных при монтировании компонента
+		onMounted(async () => {
+			try {
+				isLoading.value = true;
+				error.value = null;
+				await dictionaryStore.fetchDictionaries();
+			} catch (e) {
+				error.value = 'Ошибка при загрузке данных. Пожалуйста, попробуйте позже.';
+				console.error('Error loading dictionaries:', e);
+			} finally {
+				isLoading.value = false;
+			}
+		});
 
 		const cities = computed(() => dictionaryStore.getCities);
 		const workshops = computed(() => dictionaryStore.getWorkshops);
@@ -84,6 +106,8 @@ export default {
 			if (!selectedCity.value) return workshops.value; // Если город не выбран, показываем все цехи
 			return dictionaryStore.getWorkshopsByCityId(selectedCity.value);
 		});
+
+	
 
 		const filteredEmployees = computed(() => {
 			// Если ни город, ни цех не выбраны, показываем всех сотрудников
@@ -156,6 +180,16 @@ export default {
 			router.push('/result');
 		};
 
+
+		watch(selectedCity, (newCity) => {
+			if (newCity) {
+			selectedWorkshop.value = null;
+			selectedEmployee.value = null;
+			selectedTeam.value = null;
+			selectedShift.value = null;
+			}
+		});
+
 		return {
 			cities,
 			filteredWorkshops,
@@ -169,7 +203,8 @@ export default {
 			selectedShift,
 			handleSubmit,
 			clearSelect,
-
+			isLoading,
+			error
 		};
 	}
 };
